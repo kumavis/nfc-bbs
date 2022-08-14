@@ -1,44 +1,34 @@
-import useNavigatorPermissions from './use-navigator-permissions'
-import { useState } from 'react';
+import { useNdef, promptNdef } from './useNdef'
 import './App.css';
-import ScanContainer from './ScanContainer';
-import WriteContainer from './WriteContainer';
 
 function App() {
-  const nfcSupported = isNFCenabled();
+  const {
+    supported: nfcSupported,
+    permissionStatus: nfcPermissionStatus,
+    latestReadEvent,
+    error: nfcError,
+  } = useNdef();
 
-  const [actions, setActions] = useState(null);
-  const {scan, write} = actions || {};
-
-  const nfcPermissions = useNavigatorPermissions('nfc')
-
-  const onHandleAction = (actions) =>{
-    setActions({...actions});
-  }
+  const messageBoardId = latestReadEvent && latestReadEvent.serialNumber;
+  const messages = latestReadEvent ? latestReadEvent.message.records.map(decodeRecord) : [];
 
   return (
     <div className="App">
       <header className="App-header">
-        {/* {renderSupported()} */}
         { !nfcSupported && renderNotSupported()}
-        { nfcSupported && nfcPermissions.status === 'prompt' && renderPrompt()}
-        { nfcSupported && nfcPermissions.status === 'granted' && renderSupported()}
-        { nfcSupported && nfcPermissions.status === 'denied' && renderDenied()}
+        { nfcSupported && nfcPermissionStatus === 'prompt' && renderPrompt()}
+        { nfcSupported && nfcPermissionStatus === 'granted' && renderSupported()}
+        { nfcSupported && nfcPermissionStatus === 'denied' && renderDenied()}
+        { nfcSupported && nfcError && nfcError.toString()}
       </header>
     </div>
   );
 
-  function promptNfc (event) {
-    const ndef = new window.NDEFReader();
-    // trigger permissions prompt
-    ndef.scan().then(() => {});
-  }
-
   function renderPrompt () {
     return (
       <div>
-        {/* <p>Please allow NFC access in order to read Message Board</p> */}
-        <button onClick={promptNfc}>
+        <p>Please allow NFC access in order to read Message Board</p>
+        <button onClick={promptNdef}>
           click here
         </button>
       </div>
@@ -48,24 +38,45 @@ function App() {
   function renderSupported () {
     return (
       <div className="App-container">
-        <button onClick={()=>onHandleAction({scan: 'scanning', write: null})} className="btn">Scan</button>
-        <button onClick={()=>onHandleAction({scan: null, write: 'writing'})} className="btn">Write</button>
-        {scan && <ScanContainer />}
-        {write && <WriteContainer />}
+        {latestReadEvent ? renderMessageBoard() : renderPleaseScan()}
       </div>
     )
   }
 
-  function renderDenied () {
+  function renderMessageBoard () {
     return (
       <div>
-        <p>You have denied NFC permissions, they are required. Please reset NFC permissions.</p>
+        <p>Message Board: {messageBoardId}</p>
+        {messages.map(renderMessage)}
       </div>
     )
   }
+
 }
 
+function renderPleaseScan () {
+  return (
+    <div>
+      <p>Please scan a Message Board</p>
+    </div>
+  )
+}
 
+function renderMessage (message) {
+  return (
+    <div>
+      <p>{message}</p>
+    </div>
+  )
+}
+
+function renderDenied () {
+  return (
+    <div>
+      <p>You have denied NFC permissions, they are required. Please reset NFC permissions.</p>
+    </div>
+  )
+}
 
 function renderNotSupported () {
   return (
@@ -75,8 +86,15 @@ function renderNotSupported () {
   )
 }
 
-const isNFCenabled = () => {
-  return ('NDEFReader' in window)
+function decodeRecord (record) {
+  switch (record.recordType) {
+    case "text":
+      const textDecoder = new TextDecoder(record.encoding);
+      return textDecoder.decode(record.data);
+    default:
+      // TODO: Handle other records with record data.
+      return `Unknown record type: "${record.recordType}"`;
+  }
 }
 
 export default App;
