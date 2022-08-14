@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import useNdef from './useNdef'
 import NewMessageForm from './new-message-form';
 import './App.css';
+import packageJson from '../package.json';
+
+const { homepage: homepageUrl } = packageJson
 
 function App() {
 
@@ -25,9 +28,15 @@ function App() {
     if (!latestReadEvent) return
     setMessageBoard({
       id: latestReadEvent.serialNumber,
-      messages: latestReadEvent.message.records.map(decodeRecord),
+      messages: readMessageBoardMessagesFromRecords(latestReadEvent.message.records),
     })
   }, [latestReadEvent]);
+
+  function readMessageBoardMessagesFromRecords (records) {
+    return records
+      .filter(({recordType}) => recordType === 'text')
+      .map(decodeTextRecord)
+  }
 
   return (
     <div className="App">
@@ -37,9 +46,24 @@ function App() {
   );
 
   function submitMessage (message) {
+    // command to clear message board
+    if (message === 'command clear') {
+      setPendingRecords([
+        { recordType: 'url', data: homepageUrl },
+      ]);
+      setPendingMessages([])
+      setMessageBoard({
+        id: messageBoard.id,
+        messages: [],
+      })
+      return
+    }
+    // normal message submit
     const newPendingMessages = [...pendingMessages, message];
     setPendingMessages(newPendingMessages)
     setPendingRecords([
+      // first record is a non-message link to the message board
+      { recordType: 'url', data: homepageUrl },
       ...messageBoard.messages.map(text => ({ recordType: 'text', data: text })),
       ...newPendingMessages.map(text => ({ recordType: 'text', data: text })),
     ])
@@ -139,15 +163,9 @@ function renderDenied () {
   )
 }
 
-function decodeRecord (record) {
-  switch (record.recordType) {
-    case "text":
-      const textDecoder = new TextDecoder(record.encoding);
-      return textDecoder.decode(record.data);
-    default:
-      // TODO: Handle other records with record data.
-      return `Unknown record type: "${record.recordType}"`;
-  }
+function decodeTextRecord (record) {
+  const textDecoder = new TextDecoder(record.encoding);
+  return textDecoder.decode(record.data);
 }
 
 export default App;
