@@ -24,7 +24,7 @@ export function useNdef () {
         setError(err);
       }
     })()
-  }); 
+  }, []); 
 
   // check NDef messages
   useEffect(() => {

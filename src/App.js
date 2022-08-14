@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useNdef, promptNdef } from './useNdef'
 import './App.css';
 
@@ -9,45 +10,65 @@ function App() {
     error: nfcError,
   } = useNdef();
 
-  const messageBoardId = latestReadEvent && latestReadEvent.serialNumber;
-  const messages = latestReadEvent ? latestReadEvent.message.records.map(decodeRecord) : [];
+  const [messageBoard, setMessageBoard] = useState(null);
+
+  useEffect(() => {
+    if (!latestReadEvent) return
+    setMessageBoard({
+      id: latestReadEvent.serialNumber,
+      messages: latestReadEvent.message.records.map(decodeRecord),
+    })
+  }, [latestReadEvent]);
 
   return (
     <div className="App">
       <header className="App-header">
-        { !nfcSupported && renderNotSupported()}
-        { nfcSupported && nfcPermissionStatus === 'prompt' && renderPrompt()}
-        { nfcSupported && nfcPermissionStatus === 'granted' && renderSupported()}
-        { nfcSupported && nfcPermissionStatus === 'denied' && renderDenied()}
-        { nfcSupported && nfcError && nfcError.toString()}
+        {renderAppContent()}
       </header>
     </div>
   );
 
-  function renderPrompt () {
+  function startDemo () {
+    setMessageBoard({
+      id: 'demo board',
+      messages: [
+        'message one',
+        'message two',
+        'message three',
+      ],
+    })
+  }
+
+  function renderAppContent () {
+    if (messageBoard) {
+      return renderMessageBoard(messageBoard)
+    } else {
+      return (
+        <>
+          { !nfcSupported && renderNotSupported()}
+          { nfcSupported && nfcPermissionStatus === 'prompt' && renderPrompt()}
+          { nfcSupported && nfcPermissionStatus === 'granted' && renderPleaseScan()}
+          { nfcSupported && nfcPermissionStatus === 'denied' && renderDenied()}
+          { nfcSupported && nfcError && nfcError.toString()}
+        </>
+      )
+    }
+  }
+
+  function renderMessageBoard (messageBoard) {
     return (
       <div>
-        <p>Please allow NFC access in order to read Message Board</p>
-        <button onClick={promptNdef}>
-          click here
-        </button>
+        <p>Message Board: {messageBoard.id}</p>
+        {messageBoard.messages.map(renderMessage)}
       </div>
     )
   }
 
-  function renderSupported () {
-    return (
-      <div className="App-container">
-        {latestReadEvent ? renderMessageBoard() : renderPleaseScan()}
-      </div>
-    )
-  }
-
-  function renderMessageBoard () {
+  function renderNotSupported () {
     return (
       <div>
-        <p>Message Board: {messageBoardId}</p>
-        {messages.map(renderMessage)}
+        <p>NFC not supported</p>
+        <button onClick={startDemo}>try demo</button>
       </div>
     )
   }
@@ -62,9 +83,9 @@ function renderPleaseScan () {
   )
 }
 
-function renderMessage (message) {
+function renderMessage (message, index) {
   return (
-    <div>
+    <div key={index}>
       <p>{message}</p>
     </div>
   )
@@ -78,10 +99,13 @@ function renderDenied () {
   )
 }
 
-function renderNotSupported () {
+function renderPrompt () {
   return (
     <div>
-      <p>NFC not supported</p>
+      <p>Please allow NFC access in order to read Message Board</p>
+      <button onClick={promptNdef}>
+        click here
+      </button>
     </div>
   )
 }
