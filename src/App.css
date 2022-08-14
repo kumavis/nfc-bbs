@@ -24,6 +24,23 @@
   color: white;
 }
 
+.message {
+  border: solid 1px #000;
+  width: -webkit-fill-available;
+  margin: 20px;
+  background: whitesmoke;
+  color: midnightblue;
+}
+
+.message.message-pending {
+  background: lightgoldenrodyellow;
+}
+
+.new-message-textarea {
+  width: 80%;
+  margin: 20px;
+}
+
 .App-link {
   color: #61dafb;
 }
