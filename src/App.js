@@ -1,25 +1,34 @@
-import logo from './logo.svg';
 import './App.css';
 
 function App() {
+  const nfcSupported = isNFCenabled();
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        {nfcSupported ? renderSupported() : renderNotSupported()}
       </header>
     </div>
   );
+}
+
+function renderSupported () {
+  return (
+    <div>
+      <p>NFC supported</p>
+    </div>
+  )
+}
+
+function renderNotSupported () {
+  return (
+    <div>
+      <p>NFC not supported</p>
+    </div>
+  )
+}
+
+const isNFCenabled = () => {
+  return ('NDEFReader' in window)
 }
 
 export default App;
