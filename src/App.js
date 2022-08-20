@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import * as Sentry from "@sentry/react";
 import useNdef from './useNdef'
 import NewMessageForm from './new-message-form';
 import './App.css';
@@ -20,6 +21,16 @@ function App() {
     error: nfcError,
   } = useNdef({ 
     onWriteSuccess: () => {
+      // send diagnostic info
+      Sentry.captureMessage('NFC write success', {
+        level: 'info',
+        extra: {
+          pendingMessages,
+          messageBoardId: messageBoard.id,
+          messages: messageBoard.messages,
+        }
+      });
+      // reset write queue
       setPendingMessages([]);
     },
   });
