@@ -21,13 +21,15 @@ function App() {
     error: nfcError,
   } = useNdef({ 
     onWriteSuccess: () => {
+      const messageBoardId = messageBoard.id
+      const messages = messageBoard.messages
       // send diagnostic info
-      Sentry.captureMessage('NFC write success', {
+      Sentry.captureMessage(`write ${messageBoardId}`, {
         level: 'info',
         extra: {
           pendingMessages,
-          messageBoardId: messageBoard.id,
-          messages: messageBoard.messages,
+          messageBoardId,
+          messages,
         }
       });
       // reset write queue
@@ -37,10 +39,21 @@ function App() {
 
   useEffect(() => {
     if (!latestReadEvent) return
+    const messageBoardId = latestReadEvent.serialNumber
+    const messages = readMessageBoardMessagesFromRecords(latestReadEvent.message.records)
     setMessageBoard({
-      id: latestReadEvent.serialNumber,
-      messages: readMessageBoardMessagesFromRecords(latestReadEvent.message.records),
+      id: messageBoardId,
+      messages,
     })
+    // send diagnostic info
+    Sentry.captureMessage(`read ${messageBoardId}`, {
+      level: 'info',
+      extra: {
+        pendingMessages,
+        messageBoardId,
+        messages,
+      }
+    });
   }, [latestReadEvent]);
 
   function readMessageBoardMessagesFromRecords (records) {
@@ -57,6 +70,8 @@ function App() {
   );
 
   function submitMessage (message) {
+    const messageBoardId = messageBoard.id
+    const messages = messageBoard.messages
     // command to clear message board
     if (message === 'command clear') {
       setPendingRecords([
@@ -64,7 +79,7 @@ function App() {
       ]);
       setPendingMessages([])
       setMessageBoard({
-        id: messageBoard.id,
+        id: messageBoardId,
         messages: [],
       })
       return
@@ -75,9 +90,19 @@ function App() {
     setPendingRecords([
       // first record is a non-message link to the message board
       { recordType: 'url', data: homepageUrl },
-      ...messageBoard.messages.map(text => ({ recordType: 'text', data: text })),
+      ...messages.map(text => ({ recordType: 'text', data: text })),
       ...newPendingMessages.map(text => ({ recordType: 'text', data: text })),
     ])
+    // send diagnostic info
+    Sentry.captureMessage(`prep ${messageBoardId}: "${message}"`, {
+      level: 'info',
+      extra: {
+        newMessage: message,
+        pendingMessages,
+        messageBoardId,
+        messages,
+      }
+    });
   }
 
   function startDemo () {
