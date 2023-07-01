@@ -20,7 +20,13 @@ export default class NewMessageForm extends React.Component {
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
-        <textarea className='new-message-textarea' placeholder='your message...' value={this.state.value} onChange={this.handleChange} />
+        <textarea
+          className='new-message-textarea'
+          placeholder='your message...'
+          value={this.state.value}
+          onChange={this.handleChange}
+          enterKeyHint="go"
+        />
       </form>
     );
   }
