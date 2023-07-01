@@ -25,20 +25,50 @@
 }
 
 .message {
-  border: solid 1px #000;
+  display: flex;
+  border: solid 1px #757575;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
   width: -webkit-fill-available;
+  margin: 0 20px;
+  font-size: 1.2rem;
+  text-align: left;
+}
+
+.message > .identicon {
+  height: 24px;
+  line-height: 22px;
   margin: 20px;
-  background: whitesmoke;
-  color: midnightblue;
+  padding: 10px;
+  background-color: #464646;
+  border-radius: 100px;
 }
 
 .message.message-pending {
   background: lightgoldenrodyellow;
 }
 
+.message-input {
+  width: -webkit-fill-available;
+  margin: 0 20px;
+  font-size: 1.2rem;
+  text-align: left;
+}
+
+.message-input > form {
+  display: flex;
+}
+
 .new-message-textarea {
   width: 80%;
   margin: 20px;
+  border-radius: 6px;
+  padding: 6px;
+  background: #515151;
+  color: white;
+  font-size: 1rem;
+  flex-grow: 1;
 }
 
 .App-link {
@@ -52,4 +82,16 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+textarea {
+  border: none;
+  overflow: auto;
+  outline: none;
+
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+
+  resize: none; /*remove the resize handle on the bottom right*/
 }

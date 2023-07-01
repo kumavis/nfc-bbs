@@ -21,7 +21,6 @@ export default class NewMessageForm extends React.Component {
     return (
       <form onSubmit={this.handleSubmit}>
         <textarea className='new-message-textarea' placeholder='your message...' value={this.state.value} onChange={this.handleChange} />
-        <input type="submit" value="Send" />
       </form>
     );
   }

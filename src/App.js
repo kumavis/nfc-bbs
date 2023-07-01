@@ -64,7 +64,6 @@ function App() {
 
   return (
     <div className="App">
-      { nfcError && nfcError.toString() }
       {renderAppContent()}
     </div>
   );
@@ -109,9 +108,9 @@ function App() {
     setMessageBoard({
       id: 'demo board',
       messages: [
-        'message one',
-        'message two',
-        'message three',
+        '1 short',
+        'very long even longer than that and yet longer still are you still there i have something to describe here i do\nand thats not the half of it',
+        `Hello world, Καλημέρα κόσμε, コンニチハ`,
       ],
     })
   }
@@ -133,9 +132,10 @@ function App() {
   }
 
   function renderMessageBoard (messageBoard) {
+    const messageBoardLabel = `Message Board: ${messageBoard.id}`
     return (
       <div>
-        <p>Message Board: {messageBoard.id}</p>
+        <p>{nfcError ? nfcError.toString() : messageBoardLabel}</p>
         <header className="App-header">
           {messageBoard.messages.map((message, index) => renderMessage(message, index))}
           {pendingMessages.map((message, index) => renderMessage(message, index, true))}
@@ -148,6 +148,7 @@ function App() {
   function renderMessage (message, index, pending = false) {
     return (
       <div key={index} className={"message " + (pending ? 'message-pending' : '')}>
+        <p className="identicon">🧞</p>
         <p>{pending && '(pending) '} {message}</p>
       </div>
     )
@@ -155,7 +156,7 @@ function App() {
 
   function renderMessageInput () {
     return (
-      <div className='message'>
+      <div className='message-input'>
         <NewMessageForm onSubmit={submitMessage}/>
       </div>
     )
