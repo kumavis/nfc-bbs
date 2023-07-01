@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/nfc-bbs/static/css/main.43f73cd7.css",
-    "main.js": "/nfc-bbs/static/js/main.3eccebec.js",
+    "main.js": "/nfc-bbs/static/js/main.1aae4a6e.js",
     "static/js/787.e91ad23a.chunk.js": "/nfc-bbs/static/js/787.e91ad23a.chunk.js",
     "index.html": "/nfc-bbs/index.html",
     "main.43f73cd7.css.map": "/nfc-bbs/static/css/main.43f73cd7.css.map",
-    "main.3eccebec.js.map": "/nfc-bbs/static/js/main.3eccebec.js.map",
+    "main.1aae4a6e.js.map": "/nfc-bbs/static/js/main.1aae4a6e.js.map",
     "787.e91ad23a.chunk.js.map": "/nfc-bbs/static/js/787.e91ad23a.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.43f73cd7.css",
-    "static/js/main.3eccebec.js"
+    "static/js/main.1aae4a6e.js"
   ]
 }
