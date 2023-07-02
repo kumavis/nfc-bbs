@@ -1,30 +1,53 @@
-.App {
-  text-align: center;
+html,
+body {
+	margin: 0;
+	padding: 0;
+  height: 100%;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+body, body * {
+  box-sizing : border-box;
   display: flex;
-  flex-direction: column;
+}
+
+header > p {
+  flex: 1;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  padding: 0 20px;
+}
+
+.outer-container {
+  flex: 1;
+  flex-direction: column;
+}
+
+.App-container {
+  background-color: #282c34;
+  flex: 1 1;
+  flex-direction: column;
   color: white;
+  overflow: auto;
+}
+
+.setup-instructions {
+  flex: 1;
+  flex-direction: column;
+  width: 100vw;
+  justify-content: center;
+  align-items: center;
+}
+
+.setup-instructions > button {
+  padding: 6px 8px;
+}
+
+.message-container {
+  flex-direction: column;
+  flex: 1;
+  overflow: auto;
 }
 
 .message {
-  display: flex;
+  /* flex: 1; */
   border: solid 1px #757575;
   border-left: 0;
   border-right: 0;
@@ -36,7 +59,7 @@
 }
 
 .message > .identicon {
-  height: 24px;
+  height: 42px;
   line-height: 22px;
   margin: 20px;
   padding: 10px;
@@ -44,30 +67,27 @@
   border-radius: 100px;
 }
 
+.message > pre {
+  text-wrap: wrap;
+}
+
 .message.message-pending {
   background: #4d5264;
 }
 
 .message-input {
-  width: -webkit-fill-available;
+  flex-direction: column;
   margin: 0 20px;
-  font-size: 1.2rem;
-  text-align: left;
-}
-
-.message-input > form {
-  display: flex;
 }
 
 .new-message-textarea {
-  width: 80%;
   margin: 20px;
   border-radius: 6px;
   padding: 6px;
   background: #515151;
   color: white;
   font-size: 1rem;
-  flex-grow: 1;
+  flex: 1;
 }
 
 .new-message-button {
@@ -76,22 +96,9 @@
   margin: auto;
   border-radius: 20px;
   height: 33px;
-  width: 33px;
+  width: 28px;
   padding-left: 6px;
   background: #352ece;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 textarea {
@@ -103,5 +110,6 @@ textarea {
   -moz-box-shadow: none;
   box-shadow: none;
 
-  resize: none; /*remove the resize handle on the bottom right*/
+  /*remove the resize handle on the bottom right*/
+  resize: none;
 }

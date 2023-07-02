@@ -1,8 +1,5 @@
 import React from "react";
 
-// supported in at least chrome for android
-// https://caniuse.com/mdn-api_navigator_useragentdata
-const isMobile = navigator.userAgentData.mobile;
 
 export default class NewMessageForm extends React.Component {
   constructor(props) {
@@ -18,16 +15,22 @@ export default class NewMessageForm extends React.Component {
   }
   handleSubmit (event) {
     event.preventDefault();
+    if (this.state.value === '') return;
     this.props.onSubmit(this.state.value);
     this.setState({value: ''});
   }
   onKeyDown (event) {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && !event.shiftKey) {
       this.handleSubmit(event);
     }
   }
 
   render() {
+    // this is in render fn bc it makes debugging easier
+    // supported in at least chrome for android
+    // https://caniuse.com/mdn-api_navigator_useragentdata
+    const isMobile = navigator.userAgentData.mobile;
+
     return (
       <form onSubmit={this.handleSubmit}>
         <textarea

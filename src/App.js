@@ -64,7 +64,9 @@ function App() {
 
   return (
     <div className="App">
-      {renderAppContent()}
+      <div className="outer-container">
+        {renderAppContent()}
+      </div>
     </div>
   );
 
@@ -120,13 +122,15 @@ function App() {
       return renderMessageBoard(messageBoard)
     } else {
       return (
-        <header className="App-header">
-          { !nfcSupported && renderNotSupported()}
-          { nfcSupported && nfcPermissionStatus === 'prompt' && renderPrompt()}
-          { nfcSupported && nfcPermissionStatus === 'granted' && renderPleaseScan()}
-          { nfcSupported && nfcPermissionStatus === 'denied' && renderDenied()}
-          {/* { nfcSupported && nfcError && nfcError.toString()} */}
-        </header>
+        <main className="App-container">
+          <div className='setup-instructions'>
+            { !nfcSupported && renderNotSupported()}
+            { nfcSupported && nfcPermissionStatus === 'prompt' && renderPrompt()}
+            { nfcSupported && nfcPermissionStatus === 'granted' && renderPleaseScan()}
+            { nfcSupported && nfcPermissionStatus === 'denied' && renderDenied()}
+            {/* { nfcSupported && nfcError && nfcError.toString()} */}
+          </div>
+        </main>
       )
     }
   }
@@ -134,22 +138,26 @@ function App() {
   function renderMessageBoard (messageBoard) {
     const messageBoardLabel = `Message Board: ${messageBoard.id}`
     return (
-      <div>
-        <p>{nfcError ? nfcError.toString() : messageBoardLabel}</p>
-        <header className="App-header">
-          {messageBoard.messages.map((message, index) => renderMessage(message, index))}
-          {pendingMessages.map((message, index) => renderMessage(message, index, true))}
-          {renderMessageInput()}
+      <>
+        <header>
+          <p>{nfcError ? nfcError.toString() : messageBoardLabel}</p>
         </header>
-      </div>
+        <main className="App-container">
+          <div className="message-container">
+            {messageBoard.messages.map((message, index) => renderMessage(message, index))}
+            {pendingMessages.map((message, index) => renderMessage(message, index, true))}
+          </div>
+          {renderMessageInput()}
+        </main>
+      </>
     )
   }
 
   function renderMessage (message, index, pending = false) {
     return (
       <div key={index} className={"message " + (pending ? 'message-pending' : '')}>
-        <p className="identicon">🧞</p>
-        <p>{pending && '(pending) '} {message}</p>
+        <span className="identicon">🧞</span>
+        <pre>{message}</pre>
       </div>
     )
   }
@@ -164,21 +172,21 @@ function App() {
 
   function renderNotSupported () {
     return (
-      <div>
+      <>
         <p>NFC not supported</p>
         <button onClick={startDemo}>try demo</button>
-      </div>
+      </>
     )
   }
 
   function renderPrompt () {
     return (
-      <div>
+      <>
         <p>Please allow NFC access in order to read Message Board</p>
         <button onClick={promptNdef}>
           click here
         </button>
-      </div>
+      </>
     )
   }
 
@@ -186,17 +194,17 @@ function App() {
 
 function renderPleaseScan () {
   return (
-    <div>
+    <>
       <p>Please scan a Message Board</p>
-    </div>
+    </>
   )
 }
 
 function renderDenied () {
   return (
-    <div>
+    <>
       <p>You have denied NFC permissions, they are required. Please reset NFC permissions.</p>
-    </div>
+    </>
   )
 }
 
