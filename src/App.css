@@ -9,6 +9,10 @@ body, body * {
   display: flex;
 }
 
+.App {
+  width: 100vw;
+}
+
 header > p {
   flex: 1;
   justify-content: center;
@@ -31,7 +35,6 @@ header > p {
 .setup-instructions {
   flex: 1;
   flex-direction: column;
-  width: 100vw;
   justify-content: center;
   align-items: center;
 }
