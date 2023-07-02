@@ -70,6 +70,17 @@
   flex-grow: 1;
 }
 
+.new-message-button {
+  all: unset;
+  outline: revert;
+  margin: auto;
+  border-radius: 20px;
+  height: 33px;
+  width: 33px;
+  padding-left: 6px;
+  background: #352ece;
+}
+
 .App-link {
   color: #61dafb;
 }
